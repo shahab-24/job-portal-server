@@ -101,12 +101,10 @@ async function run() {
     const application = req.body;
     const result = await jobApplicationCollection.insertOne(application);
 
-
     // find job id form jobsApplication to show how many application has submitted for each job title-----
     // step-1====fist get job id form jobapplication collection===
     
 const id = application.job_id;
-
 // by getting id from job application has to  query  by job id which already got
 const query = {_id: new ObjectId(id)}
 const job = await jobsCollection.findOne(query)
@@ -118,21 +116,30 @@ if(job.applicationCount){
 } else{
   newCount = 1;
 }
-
 // update doc--------------------------
 // step-2
 // now to show application count in each job title by id...has to update ui and has to add filed named applicationCount filed when applying to the job
 
 const filter = {_id: new ObjectId(id)};
-
 const updatedDoc = {
   $set: {
     applicationCount : newCount
   }
 }
-
 const updateResult = await jobsCollection.updateOne(filter, updatedDoc)
 
+    res.send(result)
+  })
+
+  app.patch('/job-applications/:id', async(req, res) => {
+    const id = req.params.id;
+    const query = {_id: new ObjectId(id)}
+    const data = req.body;
+    const updatedDoc = {
+      $set: {
+        status: data.status
+      }
+git     const result = await jobApplicationCollection.updateOne(query, updatedDoc)
     res.send(result)
   })
     // Send a ping to confirm a successful connection
