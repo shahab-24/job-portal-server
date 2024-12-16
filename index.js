@@ -52,6 +52,24 @@ async function run() {
 
   })
 
+
+  const verifyToken = (req,res, next) => {
+    console.log("hello from verify token")
+    const token = req?.cookies?.token
+
+    if(!token){
+      return res.status(401).send({message: "Unauthorized access"})
+    }
+
+    jwt.verify(token, process.env.JWT_SECRET,(err, decoded) =>{
+      if(err){
+        return res.status(401).send({message: "Unauthorized access"})
+      }
+      next()
+    } )
+
+  }
+
   // jobs related APIs
 
 	app.get('/jobs', async(req,res) => {
@@ -85,7 +103,7 @@ async function run() {
   // job application apis
 
 
-  app.get("/job-application", async(req, res) => {
+  app.get("/job-application",verifyToken, async(req, res) => {
     const email = req.query.email;
     const query = {applicant_email: email}
     console.log("cookies", req.cookies)
