@@ -52,6 +52,13 @@ async function run() {
 
   })
 
+  app.post('/logout',(req, res) => {
+    res.clearCookie("token",{
+      httpOnly: true,
+      secure: false
+    }).send({success: true})
+  })
+
 
   const verifyToken = (req,res, next) => {
     console.log("hello from verify token")
